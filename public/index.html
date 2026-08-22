@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tutor Class Report - Giant Strides Online School</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 60'><circle cx='14' cy='32' r='5' fill='%23F2A900' /><path d='M 26,50 A 29,29 0 0,1 84,50' fill='none' stroke='%231B4DF5' stroke-width='9' stroke-linecap='butt'/><line x1='41' y1='31' x2='69' y2='31' stroke='%231B4DF5' stroke-width='3'/><line x1='41' y1='37' x2='69' y2='37' stroke='%231B4DF5' stroke-width='3'/><line x1='41' y1='43' x2='69' y2='43' stroke='%231B4DF5' stroke-width='3'/><line x1='41' y1='49' x2='69' y2='49' stroke='%231B4DF5' stroke-width='3'/></svg>">
+</head>
+<body>
+
+  <header>
+    <a href="index.html" class="logo-container">
+      <svg class="logo-svg" viewBox="0 0 100 60">
+        <circle cx="14" cy="32" r="5" fill="#F2A900" />
+        <path d="M 26,50 A 29,29 0 0,1 84,50" fill="none" stroke-width="9" stroke-linecap="butt"/>
+        <line x1="41" y1="31" x2="69" y2="31" stroke-width="3"/>
+        <line x1="41" y1="37" x2="69" y2="37" stroke-width="3"/>
+        <line x1="41" y1="43" x2="69" y2="43" stroke-width="3"/>
+        <line x1="41" y1="49" x2="69" y2="49" stroke-width="3"/>
+      </svg>
+      <div class="logo-text-group">
+        <span class="logo-text-main">Giant Strides</span>
+        <span class="logo-text-sub">Online School</span>
+      </div>
+    </a>
+    <div class="header-actions">
+      <a href="admin.html" class="nav-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="vertical-align: middle;">
+          <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0zm-9 8c0 1 1 1 1 1h10s1 0 1-1-1-4-6-4-6 3-6 4z"/>
+        </svg>
+        Admin Portal
+      </a>
+    </div>
+  </header>
+
+  <main>
+    <div class="card" style="max-width: 680px; margin: 0 auto;">
+      <h2 class="card-title">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 16 16" style="color: var(--accent); vertical-align: middle;">
+          <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+          <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+        </svg>
+        Daily Tutor Class Report
+      </h2>
+      <p style="margin-bottom: 2rem; color: var(--text-muted); font-size: 0.95rem;">
+        Please complete this form at the end of every lesson. All fields marked with <span class="required-dot">*</span> are mandatory.
+      </p>
+
+      <form id="tutorReportForm" novalidate>
+        
+        <!-- Tutor Name selection (Custom Searchable Dropdown) -->
+        <div class="form-group">
+          <label for="tutorInput">Tutor Full Name <span class="required-dot">*</span></label>
+          <div class="custom-select-wrapper" id="tutorSelectWrapper">
+            <div class="custom-select-trigger" id="tutorSelectTrigger">
+              <input type="text" id="tutorInput" placeholder="Select or search your name..." readonly required>
+              <span class="custom-select-arrow">▼</span>
+            </div>
+            <div class="custom-select-dropdown" id="tutorDropdown">
+              <div class="custom-select-header">
+                <input type="text" id="tutorSearchInput" placeholder="Search name..." autocomplete="off">
+                <button type="button" class="custom-select-close" id="tutorDropdownClose">Cancel</button>
+              </div>
+              <div class="custom-select-list" id="tutorList">
+                <!-- Dynamically populated -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Student Name -->
+        <div class="form-group">
+          <label for="studentName">Student Name <span class="required-dot">*</span></label>
+          <input type="text" id="studentName" required>
+        </div>
+
+        <!-- Date of Class -->
+        <div class="form-group">
+          <label for="classDate">Date of Class <span class="required-dot">*</span></label>
+          <input type="date" id="classDate" min="2026-01-01" required>
+        </div>
+
+        <!-- Subject/Skill Taught -->
+        <div class="form-group">
+          <label for="subject">Subject / Skill Taught <span class="required-dot">*</span></label>
+          <input type="text" id="subject" required>
+        </div>
+
+        <!-- Topic Covered -->
+        <div class="form-group">
+          <label for="topic">Topic Covered <span class="required-dot">*</span></label>
+          <input type="text" id="topic" required>
+        </div>
+
+        <!-- Was an assignment given? -->
+        <div class="form-group">
+          <label>Was an assignment given? <span class="required-dot">*</span></label>
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="assignmentYes" name="assignmentGiven" value="Yes" required>
+              <label for="assignmentYes" class="radio-label yes-label">Yes</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="assignmentNo" name="assignmentGiven" value="No" required checked>
+              <label for="assignmentNo" class="radio-label no-label">No</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Assignment Details (Conditional) -->
+        <div class="form-group conditional-field" id="assignmentDetailsGroup">
+          <label for="assignmentDetails">Assignment Details <span class="required-dot">*</span></label>
+          <textarea id="assignmentDetails" rows="3" placeholder="Enter assignment tasks, due dates, or resources..."></textarea>
+        </div>
+
+        <!-- Learner Observation -->
+        <div class="form-group">
+          <label for="learnerObservation">Learner Observation <span class="required-dot">*</span></label>
+          <textarea id="learnerObservation" rows="5" required placeholder="Describe the student's progress, participation, engagement, or area of difficulty..."></textarea>
+        </div>
+
+        <!-- Other Feedback -->
+        <div class="form-group">
+          <label for="otherFeedback">Any other feedback</label>
+          <textarea id="otherFeedback" rows="3" placeholder="Optional comments, tech issues, scheduling reminders..."></textarea>
+        </div>
+
+        <!-- Submit Button -->
+        <div style="margin-top: 2rem;">
+          <button type="submit" class="btn btn-secondary" id="submitBtn">
+            Submit Daily Report
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </main>
+
+  <footer>
+    &copy; 2026 Giant Strides Online School. All Rights Reserved.
+  </footer>
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

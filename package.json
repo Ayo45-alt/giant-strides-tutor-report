@@ -1,0 +1,20 @@
+{
+  "name": "giant-strides-tutor-report",
+  "version": "1.0.0",
+  "description": "Tutor Report Submission and Admin Dashboard System for Giant Strides Online School",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.11.5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

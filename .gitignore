@@ -1,0 +1,16 @@
+# Dependency directories
+node_modules/
+
+# Local environment files (contain private database credentials)
+.env
+.env.local
+
+# Local database files
+db.json
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# VS Code config
+.vscode/
