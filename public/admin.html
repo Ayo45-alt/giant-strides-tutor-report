@@ -317,9 +317,14 @@
         <!-- ======================================================== -->
         <div id="tabTutors" class="tab-content no-print" style="display: none;">
           <div class="card">
-            <h3 class="card-title">Tutor Directory Manager</h3>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem;">
-              Manage the master list of 60+ tutors. Names in this directory populate the tutor selector on the submission form and generate the daily checklist.
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
+              <h3 class="card-title" style="margin-bottom: 0;">Tutor Directory Manager</h3>
+              <span class="attendance-count" style="background-color: var(--primary-light); color: var(--primary); font-size: 0.85rem; font-weight: 600; padding: 0.35rem 0.75rem; border-radius: 20px; display: inline-flex; align-items: center; gap: 0.35rem;">
+                <span id="tutorCountNumber">0</span> Registered Tutors
+              </span>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem; line-height: 1.5;">
+              View, register, and manage active tutors for Giant Strides. Tutors listed in this directory populate the tutor selection dropdown on the daily lesson report form and are automatically tracked on the daily submission checklist.
             </p>
 
             <div class="tutor-mgmt-layout">

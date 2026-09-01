@@ -53,6 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Tab 3: Tutor Management elements
   const tutorListContainer = document.getElementById('tutorListContainer');
   const tutorListSpinner = document.getElementById('tutorListSpinner');
+  const tutorCountNumber = document.getElementById('tutorCountNumber');
   const addTutorForm = document.getElementById('addTutorForm');
   const newTutorName = document.getElementById('newTutorName');
 
@@ -629,7 +630,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (error) throw error;
 
-      if (tutors.length === 0) {
+      if (tutorCountNumber) {
+        tutorCountNumber.textContent = tutors ? tutors.length : 0;
+      }
+
+      if (!tutors || tutors.length === 0) {
         tutorListContainer.innerHTML = '<p style="padding: 1.5rem; text-align: center; color: var(--text-muted);">No tutors registered. Add a tutor on the right.</p>';
         return;
       }
@@ -674,6 +679,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
     } catch (err) {
+      if (tutorCountNumber) tutorCountNumber.textContent = '0';
       tutorListContainer.innerHTML = `<p style="padding: 1.5rem; text-align: center; color: var(--danger);">${err.message}</p>`;
     } finally {
       tutorListSpinner.style.display = 'none';
