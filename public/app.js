@@ -226,9 +226,8 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>
     
     <div style="padding: 28px 30px;">
-      <div style="font-size: 15px; margin-bottom: 20px;">
-        Hello <strong>${esc(data.tutor_name)}</strong>,<br>
-        Here is a copy of the daily lesson report you just submitted for your personal records and monthly invoice reconciliation.
+      <div style="font-size: 15px; margin-bottom: 18px;">
+        Hello <strong>${esc(data.tutor_name)}</strong>,
       </div>
 
       <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 18px; margin-bottom: 20px;">
@@ -349,7 +348,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // If email copy requested and tutor email is available, dispatch email via Google Webhook
       if (emailCopyCheckbox && emailCopyCheckbox.checked && selectedTutorEmail && window.MAILER_WEBHOOK_URL) {
         try {
-          const subject = `Lesson Report Receipt — ${student_name || 'Class'} (${class_date || 'Today'})`;
+          const emailSubjectLine = `Lesson Report Receipt — ${student_name || 'Class'} (${class_date || 'Today'})`;
           const htmlBody = buildReceiptEmailHtml({
             tutor_name,
             student_name,
@@ -369,7 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               to: selectedTutorEmail,
-              subject,
+              subject: emailSubjectLine,
               htmlBody
             })
           }).catch(emailErr => {
