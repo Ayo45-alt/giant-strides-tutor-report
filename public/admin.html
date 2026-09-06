@@ -345,8 +345,12 @@
                   <h4 style="color: var(--primary); margin-bottom: 1rem;">Add New Tutor</h4>
                   <form id="addTutorForm">
                     <div class="form-group">
-                      <label for="newTutorName">Tutor Full Name</label>
+                      <label for="newTutorName">Tutor Full Name <span class="required-dot">*</span></label>
                       <input type="text" id="newTutorName" required placeholder="e.g. Johnathan Davis">
+                    </div>
+                    <div class="form-group">
+                      <label for="newTutorEmail">Tutor Email Address</label>
+                      <input type="email" id="newTutorEmail" placeholder="e.g. tutor@gmail.com">
                     </div>
                     <button type="submit" class="btn btn-secondary">
                       Register Tutor

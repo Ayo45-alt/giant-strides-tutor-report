@@ -19,9 +19,37 @@ document.addEventListener('DOMContentLoaded', () => {
   const assignmentDetailsGroup = document.getElementById('assignmentDetailsGroup');
   const assignmentDetails = document.getElementById('assignmentDetails');
   const submitBtn = document.getElementById('submitBtn');
+  const emailCopyCheckbox = document.getElementById('emailCopyCheckbox');
+  const emailTargetNotice = document.getElementById('emailTargetNotice');
+  const tutorTargetEmail = document.getElementById('tutorTargetEmail');
 
   let validTutors = []; // Cache list of registered tutors for validation
-  let tutorsList = [];  // Cache of tutors directory for filtering
+  let tutorsList = [];  // Cache of tutors directory with emails
+  let selectedTutorEmail = '';
+
+  function updateSelectedTutor(name) {
+    tutorInput.value = name;
+    const matched = tutorsList.find(t => t.name.toLowerCase().trim() === name.toLowerCase().trim());
+    selectedTutorEmail = (matched && matched.email) ? matched.email.trim() : '';
+    updateEmailNotice();
+  }
+
+  function updateEmailNotice() {
+    if (emailCopyCheckbox && emailCopyCheckbox.checked) {
+      if (selectedTutorEmail) {
+        tutorTargetEmail.textContent = selectedTutorEmail;
+        emailTargetNotice.style.display = 'block';
+      } else {
+        emailTargetNotice.style.display = 'none';
+      }
+    } else {
+      if (emailTargetNotice) emailTargetNotice.style.display = 'none';
+    }
+  }
+
+  if (emailCopyCheckbox) {
+    emailCopyCheckbox.addEventListener('change', updateEmailNotice);
+  }
 
   // Set default class date to today
   const today = new Date().toISOString().split('T')[0];
@@ -34,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const { data: tutors, error } = await supabase
         .from('tutors')
-        .select('name')
+        .select('name, email')
         .order('name', { ascending: true });
 
       if (error) throw error;
@@ -49,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Pre-populate input if tutor has previously saved name
       const lastSelectedTutor = localStorage.getItem('lastSelectedTutor');
       if (lastSelectedTutor) {
-        tutorInput.value = lastSelectedTutor;
+        updateSelectedTutor(lastSelectedTutor);
       }
 
     } catch (err) {
@@ -76,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
       
       item.addEventListener('click', (e) => {
         e.stopPropagation();
-        tutorInput.value = tutor.name;
+        updateSelectedTutor(tutor.name);
         tutorSelectWrapper.classList.remove('open');
         
         // Reset validation border highlights
@@ -235,6 +263,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Save tutor name in localStorage to auto-select on return
       localStorage.setItem('lastSelectedTutor', tutor_name);
+
+      // If email copy requested and tutor email is available, dispatch email
+      if (emailCopyCheckbox && emailCopyCheckbox.checked && selectedTutorEmail) {
+        try {
+          // Asynchronously dispatch email copy (non-blocking)
+          fetch('/api/send-email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              to: selectedTutorEmail,
+              tutor_name,
+              student_name,
+              class_date,
+              subject,
+              topic,
+              assignment_given,
+              assignment_details: assignment_details || '',
+              learner_observation,
+              other_feedback: other_feedback || ''
+            })
+          }).catch(emailErr => {
+            console.warn('Email dispatch notice (report was safely saved):', emailErr);
+          });
+        } catch (e) {
+          console.warn('Email trigger error:', e);
+        }
+      }
 
       // Redirect to success page
       window.location.href = 'success.html';

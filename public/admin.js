@@ -56,6 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const tutorCountNumber = document.getElementById('tutorCountNumber');
   const addTutorForm = document.getElementById('addTutorForm');
   const newTutorName = document.getElementById('newTutorName');
+  const newTutorEmail = document.getElementById('newTutorEmail');
 
   // Detail Modal Elements
   const detailModalOverlay = document.getElementById('detailModalOverlay');
@@ -625,7 +626,7 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const { data: tutors, error } = await supabase
         .from('tutors')
-        .select('id, name')
+        .select('id, name, email')
         .order('name', { ascending: true });
 
       if (error) throw error;
@@ -643,7 +644,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const item = document.createElement('div');
         item.className = 'tutor-list-item';
         item.innerHTML = `
-          <span style="font-weight: 500; color: var(--text-main);">${escapeHTML(tutor.name)}</span>
+          <div style="display: flex; flex-direction: column; gap: 0.15rem;">
+            <span style="font-weight: 500; color: var(--text-main);">${escapeHTML(tutor.name)}</span>
+            ${tutor.email ? `<span style="font-size: 0.8rem; color: var(--text-muted);">${escapeHTML(tutor.email)}</span>` : '<span style="font-size: 0.75rem; color: #cbd5e0; font-style: italic;">No email</span>'}
+          </div>
           <button class="btn-delete" title="Delete Tutor" data-id="${tutor.id}" data-name="${escapeHTML(tutor.name)}">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
               <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
@@ -690,11 +694,15 @@ document.addEventListener('DOMContentLoaded', () => {
   addTutorForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const name = newTutorName.value.trim();
+    const email = newTutorEmail ? newTutorEmail.value.trim() : '';
+
+    const payload = { name };
+    if (email) payload.email = email;
 
     try {
       const { data, error } = await supabase
         .from('tutors')
-        .insert([{ name }]);
+        .insert([payload]);
 
       if (error) {
         if (error.code === '23505' || error.message.includes('unique')) {
@@ -704,6 +712,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       newTutorName.value = '';
+      if (newTutorEmail) newTutorEmail.value = '';
       // Refresh directory and dropdowns
       loadTutorsDirectory();
       loadTutorDropdowns();
