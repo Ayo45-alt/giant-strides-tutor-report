@@ -85,7 +85,8 @@ INSERT INTO tutors (name, email, phone) VALUES
 ('Ayomide Esther Oyeku', 'estheroyekuofficial@gmail.com', '08140695461'),
 ('Tosin Morakinyo', 'morakinyoisrael@gmail.com', '07069104614'),
 ('Oyewole Tolu Joy', 'tolujoyoyewole@gmail.com', '08065564461'),
-('ADEWONBI IBUKUNOLUWA SARAH', 'ibukunoluwa.sarah@gmail.com', '08143916269')
+('ADEWONBI IBUKUNOLUWA SARAH', 'ibukunoluwa.sarah@gmail.com', '08143916269'),
+('Mary Jane', 'ayologr8@gmail.com', '08000000000')
 ON CONFLICT (name) DO UPDATE SET
     email = EXCLUDED.email,
     phone = EXCLUDED.phone;
