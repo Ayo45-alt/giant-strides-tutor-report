@@ -742,7 +742,7 @@ document.addEventListener('DOMContentLoaded', () => {
     bulkTutorInput.focus();
   });
 
-  // Bulk input parser
+  // Bulk input parser supporting text, Excel tabs, CSV, and Markdown tables
   function parseBulkInput(text) {
     if (!text || !text.trim()) return [];
     
@@ -754,8 +754,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const emailRegex = /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/;
 
     lines.forEach(line => {
-      const trimmedLine = line.trim();
+      let trimmedLine = line.trim();
       if (!trimmedLine) return;
+
+      // Ignore markdown table divider lines (e.g. |---|---|) or pure punctuation lines
+      if (/^\|?[\s\-:|]+\|?$/.test(trimmedLine)) return;
+      if (/^\|?\s*#?\s*\|\s*name\s*\|\s*email\s*\|?$/i.test(trimmedLine)) return;
 
       let name = '';
       let email = '';
@@ -763,12 +767,22 @@ document.addEventListener('DOMContentLoaded', () => {
       const emailMatch = trimmedLine.match(emailRegex);
       if (emailMatch) {
         email = emailMatch[1].trim();
+        // Remove email, then clean up delimiters including pipes |, quotes, brackets
         name = trimmedLine.replace(emailMatch[0], '')
-          .replace(/[<>()[\],:\-–\t]/g, ' ')
+          .replace(/[|<>()[\]{},:;\-–\t]/g, ' ')
           .replace(/\s+/g, ' ')
           .trim();
       } else {
-        if (trimmedLine.includes('\t')) {
+        if (trimmedLine.includes('|')) {
+          const parts = trimmedLine.split('|').map(p => p.trim()).filter(Boolean);
+          if (parts.length >= 2 && /^\d+$/.test(parts[0])) {
+            name = parts[1];
+            if (parts.length >= 3 && parts[2].includes('@')) email = parts[2];
+          } else {
+            name = parts[0] || '';
+            if (parts.length > 1 && parts[1].includes('@')) email = parts[1];
+          }
+        } else if (trimmedLine.includes('\t')) {
           const parts = trimmedLine.split('\t').map(p => p.trim()).filter(Boolean);
           name = parts[0] || '';
           if (parts.length > 1 && parts[1].includes('@')) email = parts[1];
@@ -785,7 +799,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
 
-      name = name.replace(/^\d+[\.\)\-]\s*/, '').trim();
+      // Strip leading numbers e.g. "1.", "1 -", "1 ", or "#"
+      name = name.replace(/^#?\s*\d+[\.\)\-\:\s]+\s*/, '')
+        .replace(/[|]/g, '')
+        .trim();
+
+      // Skip header keywords if pasted
+      if (/^(name|tutor|tutor name|email|#)$/i.test(name)) return;
 
       if (name.length > 0) {
         const lowerName = name.toLowerCase();
