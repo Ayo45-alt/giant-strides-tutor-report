@@ -216,12 +216,13 @@
                 <table id="reportsTable">
                   <thead>
                     <tr>
-                      <th style="width: 120px;">Date</th>
+                      <th style="width: 105px;">Date</th>
                       <th>Student Name</th>
+                      <th style="width: 135px;">Class Type</th>
                       <th>Subject / Skill</th>
                       <th>Topic Covered</th>
-                      <th style="width: 150px; text-align: center;">Assignment</th>
-                      <th class="no-print" style="width: 100px; text-align: center;">Details</th>
+                      <th style="width: 110px; text-align: center;">Assignment</th>
+                      <th class="no-print" style="width: 75px; text-align: center;">Details</th>
                     </tr>
                   </thead>
                   <tbody id="reportsTableBody">
@@ -339,23 +340,77 @@
                 </div>
               </div>
 
-              <!-- Add new tutor form -->
+              <!-- Add new tutor container (Single or Bulk) -->
               <div>
-                <div style="background-color: var(--primary-light); padding: 1.5rem; border-radius: 8px; border: 1.5px solid var(--border);">
-                  <h4 style="color: var(--primary); margin-bottom: 1rem;">Add New Tutor</h4>
-                  <form id="addTutorForm">
-                    <div class="form-group">
-                      <label for="newTutorName">Tutor Full Name <span class="required-dot">*</span></label>
-                      <input type="text" id="newTutorName" required placeholder="e.g. Johnathan Davis">
-                    </div>
-                    <div class="form-group">
-                      <label for="newTutorEmail">Tutor Email Address</label>
-                      <input type="email" id="newTutorEmail" placeholder="e.g. tutor@gmail.com">
-                    </div>
-                    <button type="submit" class="btn btn-secondary">
-                      Register Tutor
+                <div style="background-color: #ffffff; padding: 1.5rem; border-radius: 8px; border: 1.5px solid var(--border); box-shadow: var(--shadow-sm);">
+                  <!-- Sub-tabs for Single vs Bulk -->
+                  <div class="tutor-add-tabs" style="display: flex; gap: 0.5rem; margin-bottom: 1.25rem; border-bottom: 2px solid var(--border); padding-bottom: 0.5rem;">
+                    <button type="button" class="subtab-btn active" id="subtabSingleBtn">
+                      Single Tutor
                     </button>
-                  </form>
+                    <button type="button" class="subtab-btn" id="subtabBulkBtn">
+                      Bulk Paste / Import
+                    </button>
+                  </div>
+
+                  <!-- 1. Single Tutor Form View -->
+                  <div id="singleTutorView">
+                    <h4 style="color: var(--primary); margin-bottom: 1rem; font-size: 1.05rem;">Add Single Tutor</h4>
+                    <form id="addTutorForm">
+                      <div class="form-group">
+                        <label for="newTutorName">Tutor Full Name <span class="required-dot">*</span></label>
+                        <input type="text" id="newTutorName" required placeholder="e.g. Johnathan Davis">
+                      </div>
+                      <div class="form-group">
+                        <label for="newTutorEmail">Tutor Email Address</label>
+                        <input type="email" id="newTutorEmail" placeholder="e.g. tutor@gmail.com">
+                      </div>
+                      <button type="submit" class="btn btn-secondary">
+                        Register Tutor
+                      </button>
+                    </form>
+                  </div>
+
+                  <!-- 2. Bulk Tutor Import View -->
+                  <div id="bulkTutorView" style="display: none;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                      <h4 style="color: var(--primary); margin-bottom: 0; font-size: 1.05rem;">Bulk Add Tutors</h4>
+                      <span id="bulkBadgeCount" class="tag tag-regular" style="display: none;">0 Detected</span>
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 0.75rem; line-height: 1.4;">
+                      Paste your tutor list directly from Excel, Google Sheets, or WhatsApp. Supports comma, tab, or hyphen separated formats.
+                    </p>
+                    
+                    <div class="form-group" style="margin-bottom: 0.75rem;">
+                      <textarea id="bulkTutorInput" rows="6" placeholder="Paste tutors list here...&#10;Examples:&#10;Alex Morgan, alex@example.com&#10;David Beckham	david@gmail.com&#10;Jane Doe - jane@gmail.com&#10;Samuel Jackson" style="font-family: monospace; font-size: 0.88rem;"></textarea>
+                    </div>
+
+                    <!-- Parsed preview box -->
+                    <div id="bulkPreviewContainer" style="display: none; margin-bottom: 1rem; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
+                      <div style="background: var(--bg-app); padding: 0.5rem 0.75rem; font-size: 0.8rem; font-weight: 600; color: var(--text-main); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between;">
+                        <span>Preview (<span id="bulkValidCount">0</span> ready)</span>
+                        <span id="bulkExistingWarning" style="color: #d97706; display: none;">Duplicates will be skipped</span>
+                      </div>
+                      <div style="max-height: 140px; overflow-y: auto; font-size: 0.82rem;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                          <tbody id="bulkPreviewList"></tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    <!-- Bulk action status message -->
+                    <div id="bulkStatusBanner" style="display: none; padding: 0.75rem; border-radius: 6px; font-size: 0.85rem; margin-bottom: 1rem;"></div>
+
+                    <div style="display: flex; gap: 0.5rem;">
+                      <button type="button" id="btnProcessBulk" class="btn btn-secondary" style="flex: 2;">
+                        Import All Tutors
+                      </button>
+                      <button type="button" id="btnClearBulk" class="btn btn-outline" style="flex: 1;">
+                        Clear
+                      </button>
+                    </div>
+                  </div>
+
                 </div>
               </div>
             </div>
@@ -377,8 +432,12 @@
           <div><strong>Tutor:</strong> <span id="detailTutor">-</span></div>
           <div><strong>Student:</strong> <span id="detailStudent">-</span></div>
           <div><strong>Date:</strong> <span id="detailDate">-</span></div>
+          <div><strong>Class Type:</strong> <span id="detailClassType">-</span></div>
+          <div id="detailMakeupForGroup" style="display: none; grid-column: span 2; background: #FFF8E6; padding: 0.6rem 0.85rem; border-radius: 6px; border: 1px solid #FDE68A;">
+            <strong style="color: #92400E;">Make-up For:</strong> <span id="detailMakeupFor" style="color: #B45309; font-weight: 600; margin-left: 0.25rem;">-</span>
+          </div>
           <div><strong>Subject:</strong> <span id="detailSubject">-</span></div>
-          <div style="grid-column: span 2;"><strong>Topic:</strong> <span id="detailTopic">-</span></div>
+          <div><strong>Topic:</strong> <span id="detailTopic">-</span></div>
         </div>
 
         <div style="margin-bottom: 1.25rem;">

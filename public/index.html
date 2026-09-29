@@ -81,6 +81,25 @@
           <input type="date" id="classDate" min="2026-01-01" required>
         </div>
 
+        <!-- Class Type Selection -->
+        <div class="form-group">
+          <label for="classType">Class Type <span class="required-dot">*</span></label>
+          <select id="classType" required>
+            <option value="Regular Class" selected>Regular Class</option>
+            <option value="Make-up Class">Make-up Class</option>
+            <option value="Extra/Assessment Class">Extra/Assessment Class</option>
+          </select>
+        </div>
+
+        <!-- Conditional Make-up For Date Selector -->
+        <div class="form-group conditional-field" id="makeupDateGroup">
+          <label for="makeupDate">Make-up For <span class="required-dot">*</span></label>
+          <input type="date" id="makeupDate" min="2026-01-01">
+          <small style="color: var(--text-muted); font-size: 0.8rem; display: block; margin-top: 0.35rem;">
+            Select the date of the missed lesson this class is covering.
+          </small>
+        </div>
+
         <!-- Subject/Skill Taught -->
         <div class="form-group">
           <label for="subject">Subject / Skill Taught <span class="required-dot">*</span></label>

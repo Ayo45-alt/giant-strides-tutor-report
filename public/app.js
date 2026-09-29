@@ -14,6 +14,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const tutorList = document.getElementById('tutorList');
 
   const classDateInput = document.getElementById('classDate');
+  const classTypeSelect = document.getElementById('classType');
+  const makeupDateGroup = document.getElementById('makeupDateGroup');
+  const makeupDateInput = document.getElementById('makeupDate');
   const assignmentYes = document.getElementById('assignmentYes');
   const assignmentNo = document.getElementById('assignmentNo');
   const assignmentDetailsGroup = document.getElementById('assignmentDetailsGroup');
@@ -164,6 +167,23 @@ document.addEventListener('DOMContentLoaded', () => {
   assignmentYes.addEventListener('change', toggleAssignmentDetails);
   assignmentNo.addEventListener('change', toggleAssignmentDetails);
 
+  // Handle Class Type & Make-up For toggle
+  function toggleClassType() {
+    if (classTypeSelect.value === 'Make-up Class') {
+      makeupDateGroup.classList.add('show');
+      makeupDateInput.required = true;
+      makeupDateInput.max = new Date().toISOString().split('T')[0];
+    } else {
+      makeupDateGroup.classList.remove('show');
+      makeupDateInput.required = false;
+      makeupDateInput.value = '';
+      makeupDateInput.style.borderColor = 'var(--border)';
+      makeupDateInput.style.boxShadow = 'none';
+    }
+  }
+
+  classTypeSelect.addEventListener('change', toggleClassType);
+
   // Form Client-side validation style utility
   function validateField(inputElement) {
     if (!inputElement.required) return true;
@@ -194,6 +214,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  function formatDateLabel(dateString) {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return dateString;
+    return date.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  }
+
   function buildReceiptEmailHtml(data) {
     const esc = (str) => {
       if (!str) return '';
@@ -210,6 +237,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const feedbackHtml = data.other_feedback 
       ? '<div style="font-size: 13px; font-weight: 700; color: #1B4DF5; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 16px; margin-bottom: 6px;">Other Feedback / Remarks</div><div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px; font-size: 14px; line-height: 1.5; color: #2d3748; white-space: pre-wrap;">' + esc(data.other_feedback) + '</div>'
+      : '';
+
+    const makeupDisplay = data.makeup_date ? formatDateLabel(data.makeup_date) : (data.makeup_month || '');
+    const makeupLabel = (data.class_type === 'Make-up Class' && makeupDisplay) 
+      ? ` <span style="font-size: 12px; color: #B45309; font-weight: normal;">(Make-up for ${esc(makeupDisplay)})</span>` 
       : '';
 
     return `
@@ -238,7 +270,13 @@ document.addEventListener('DOMContentLoaded', () => {
           </tr>
           <tr style="border-bottom: 1px solid #edf2f7;">
             <td style="padding: 7px 0; color: #718096; font-weight: 600;">Date of Class</td>
-            <td style="padding: 7px 0; text-align: right; color: #1a202c;">${esc(data.class_date)}</td>
+            <td style="padding: 7px 0; text-align: right; color: #1a202c;">${esc(formatDateLabel(data.class_date) || data.class_date)}</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #edf2f7;">
+            <td style="padding: 7px 0; color: #718096; font-weight: 600;">Class Type</td>
+            <td style="padding: 7px 0; text-align: right; color: #1a202c; font-weight: 600;">
+              ${esc(data.class_type || 'Regular Class')}${makeupLabel}
+            </td>
           </tr>
           <tr style="border-bottom: 1px solid #edf2f7;">
             <td style="padding: 7px 0; color: #718096; font-weight: 600;">Subject / Skill</td>
@@ -286,6 +324,8 @@ document.addEventListener('DOMContentLoaded', () => {
     requiredInputs.forEach(input => {
       // If conditional assignment details is hidden, skip it
       if (input.id === 'assignmentDetails' && !assignmentYes.checked) return;
+      // If conditional makeup date is hidden, skip it
+      if (input.id === 'makeupDate' && classTypeSelect.value !== 'Make-up Class') return;
 
       if (!validateField(input)) {
         isFormValid = false;
@@ -309,6 +349,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const student_name = document.getElementById('studentName').value.trim();
     const class_date = classDateInput.value;
+    const class_type = classTypeSelect.value;
+    const makeup_date = (class_type === 'Make-up Class') ? makeupDateInput.value : null;
+    const makeup_month = makeup_date ? makeup_date.slice(0, 7) : null;
+
+    if (class_type === 'Make-up Class' && !makeup_date) {
+      alert('Please select the date of the missed class this lesson is covering.');
+      makeupDateInput.focus();
+      return;
+    }
+
     const subject = document.getElementById('subject').value.trim();
     const topic = document.getElementById('topic').value.trim();
     const assignment_given = form.querySelector('input[name="assignmentGiven"]:checked').value;
@@ -320,6 +370,9 @@ document.addEventListener('DOMContentLoaded', () => {
       tutor_name,
       student_name,
       class_date,
+      class_type,
+      makeup_date: makeup_date || null,
+      makeup_month: makeup_month || null,
       subject,
       topic,
       assignment_given,
