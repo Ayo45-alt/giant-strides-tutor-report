@@ -944,6 +944,71 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  const tutorDirectorySearch = document.getElementById('tutorDirectorySearch');
+
+  function renderTutorDirectoryList(tutors) {
+    tutorListContainer.innerHTML = '';
+
+    if (!tutors || tutors.length === 0) {
+      tutorListContainer.innerHTML = '<p style="padding: 1.5rem; text-align: center; color: var(--text-muted);">No matching tutors found.</p>';
+      return;
+    }
+
+    tutors.forEach(tutor => {
+      const item = document.createElement('div');
+      item.className = 'tutor-list-item';
+      item.innerHTML = `
+        <div style="display: flex; flex-direction: column; gap: 0.15rem;">
+          <span style="font-weight: 500; color: var(--text-main);">${escapeHTML(tutor.name)}</span>
+          ${tutor.email ? `<span style="font-size: 0.8rem; color: var(--text-muted);">${escapeHTML(tutor.email)}</span>` : '<span style="font-size: 0.75rem; color: #cbd5e0; font-style: italic;">No email</span>'}
+        </div>
+        <button class="btn-delete" title="Delete Tutor" data-id="${tutor.id}" data-name="${escapeHTML(tutor.name)}">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+            <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+          </svg>
+        </button>
+      `;
+
+      item.querySelector('.btn-delete').addEventListener('click', async (e) => {
+        const tutorId = e.currentTarget.getAttribute('data-id');
+        const name = e.currentTarget.getAttribute('data-name');
+        
+        if (confirm(`Are you sure you want to remove "${name}" from the active directory?\n\nNote: This will not delete their past submitted reports, but their name will no longer appear in selection checklists.`)) {
+          try {
+            const { error: deleteError } = await supabase
+              .from('tutors')
+              .delete()
+              .eq('id', tutorId);
+
+            if (deleteError) throw deleteError;
+            
+            await loadTutorsDirectory();
+            await loadTutorDropdowns();
+          } catch (err) {
+            alert(err.message);
+          }
+        }
+      });
+
+      tutorListContainer.appendChild(item);
+    });
+  }
+
+  if (tutorDirectorySearch) {
+    tutorDirectorySearch.addEventListener('input', () => {
+      const q = tutorDirectorySearch.value.toLowerCase().trim();
+      if (!q) {
+        renderTutorDirectoryList(existingTutorsList);
+      } else {
+        const filtered = existingTutorsList.filter(t => 
+          t.name.toLowerCase().includes(q) || (t.email && t.email.toLowerCase().includes(q))
+        );
+        renderTutorDirectoryList(filtered);
+      }
+    });
+  }
+
   async function loadTutorsDirectory() {
     tutorListSpinner.style.display = 'block';
     tutorListContainer.innerHTML = '';
@@ -962,50 +1027,15 @@ document.addEventListener('DOMContentLoaded', () => {
         tutorCountNumber.textContent = existingTutorsList.length;
       }
 
-      if (existingTutorsList.length === 0) {
-        tutorListContainer.innerHTML = '<p style="padding: 1.5rem; text-align: center; color: var(--text-muted);">No tutors registered. Add tutors on the right.</p>';
-        return;
+      const q = tutorDirectorySearch ? tutorDirectorySearch.value.toLowerCase().trim() : '';
+      if (q) {
+        const filtered = existingTutorsList.filter(t => 
+          t.name.toLowerCase().includes(q) || (t.email && t.email.toLowerCase().includes(q))
+        );
+        renderTutorDirectoryList(filtered);
+      } else {
+        renderTutorDirectoryList(existingTutorsList);
       }
-
-      existingTutorsList.forEach(tutor => {
-        const item = document.createElement('div');
-        item.className = 'tutor-list-item';
-        item.innerHTML = `
-          <div style="display: flex; flex-direction: column; gap: 0.15rem;">
-            <span style="font-weight: 500; color: var(--text-main);">${escapeHTML(tutor.name)}</span>
-            ${tutor.email ? `<span style="font-size: 0.8rem; color: var(--text-muted);">${escapeHTML(tutor.email)}</span>` : '<span style="font-size: 0.75rem; color: #cbd5e0; font-style: italic;">No email</span>'}
-          </div>
-          <button class="btn-delete" title="Delete Tutor" data-id="${tutor.id}" data-name="${escapeHTML(tutor.name)}">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-              <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-            </svg>
-          </button>
-        `;
-
-        item.querySelector('.btn-delete').addEventListener('click', async (e) => {
-          const tutorId = e.currentTarget.getAttribute('data-id');
-          const name = e.currentTarget.getAttribute('data-name');
-          
-          if (confirm(`Are you sure you want to remove "${name}" from the active directory?\n\nNote: This will not delete their past submitted reports, but their name will no longer appear in selection checklists.`)) {
-            try {
-              const { error: deleteError } = await supabase
-                .from('tutors')
-                .delete()
-                .eq('id', tutorId);
-
-              if (deleteError) throw deleteError;
-              
-              await loadTutorsDirectory();
-              await loadTutorDropdowns();
-            } catch (err) {
-              alert(err.message);
-            }
-          }
-        });
-
-        tutorListContainer.appendChild(item);
-      });
 
     } catch (err) {
       if (tutorCountNumber) tutorCountNumber.textContent = '0';

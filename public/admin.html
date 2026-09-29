@@ -331,7 +331,12 @@
             <div class="tutor-mgmt-layout">
               <!-- Tutor directory list -->
               <div>
-                <h4 style="margin-bottom: 0.75rem; color: var(--primary);">Active Tutors Directory</h4>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                  <h4 style="margin-bottom: 0; color: var(--primary);">Active Tutors Directory</h4>
+                </div>
+                <div style="margin-bottom: 0.75rem;">
+                  <input type="text" id="tutorDirectorySearch" placeholder="Search tutors by name or email..." style="padding: 0.55rem 0.85rem; font-size: 0.88rem;">
+                </div>
                 <div class="tutor-list-wrapper">
                   <div id="tutorListSpinner" class="spinner" style="display: none;"></div>
                   <div id="tutorListContainer">
