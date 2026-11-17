@@ -45,9 +45,7 @@ header {
   box-shadow: var(--shadow-sm);
   border-top: 5px solid var(--accent);
   border-bottom: 1.5px solid var(--border);
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  position: static;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -63,6 +61,14 @@ header {
 .logo-svg {
   width: 62px;
   height: auto;
+}
+
+.report-logo {
+  display: block;
+  width: 110px;
+  max-width: 100%;
+  height: auto;
+  flex: 0 1 110px;
 }
 
 .logo-svg path,
@@ -956,9 +962,26 @@ footer {
 
 @media (max-width: 600px) {
   header {
-    flex-direction: column;
-    gap: 1rem;
-    text-align: center;
+    flex-direction: row;
+    gap: 0.5rem;
+    padding: 0.6rem 0.75rem;
+    text-align: left;
+  }
+
+  .report-logo {
+    width: 75px;
+    flex-basis: 75px;
+  }
+
+  .nav-btn {
+    gap: 0.3rem;
+    padding: 0.35rem 0.55rem;
+    font-size: 0.75rem;
+  }
+
+  .nav-btn svg {
+    width: 14px;
+    height: 14px;
   }
 
   h1.logo-text {
